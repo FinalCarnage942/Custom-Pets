@@ -42,7 +42,6 @@ public class BuffListener implements Listener {
         var reg = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         this.econ = reg != null ? reg.getProvider() : null;
 
-        // Load configuration values from buffs.yml
         FileConfiguration buffsConfig = plugin.getBuffsConfig();
 
         ConfigurationSection scavengerSection = buffsConfig.getConfigurationSection("scavenger");
@@ -74,7 +73,6 @@ public class BuffListener implements Listener {
             this.oreXRayCooldownMax = 5;
         }
 
-        // Initialize ore particles with colors
         oreParticles.put(Material.COAL_ORE, new Particle.DustOptions(Color.BLACK, 1));
         oreParticles.put(Material.IRON_ORE, new Particle.DustOptions(Color.fromRGB(192, 192, 192), 1));
         oreParticles.put(Material.COPPER_ORE, new Particle.DustOptions(Color.fromRGB(222, 119, 72), 1));
@@ -84,7 +82,6 @@ public class BuffListener implements Listener {
         oreParticles.put(Material.LAPIS_ORE, new Particle.DustOptions(Color.BLUE, 1));
         oreParticles.put(Material.DIAMOND_ORE, new Particle.DustOptions(Color.AQUA, 1));
 
-        // Load treasure hunter drops
         ConfigurationSection treasureSection = buffsConfig.getConfigurationSection("treasure-hunter-drops");
         if (treasureSection != null) {
             for (String key : treasureSection.getKeys(false)) {
@@ -101,7 +98,6 @@ public class BuffListener implements Listener {
             plugin.getLogger().warning("treasure-hunter-drops section not found in buffs config.");
         }
 
-        // Recurring buffs
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -114,7 +110,6 @@ public class BuffListener implements Listener {
             }
         }.runTaskTimer(plugin, 0, 5 * 20L);
 
-        // Ore X-Ray task
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -124,7 +119,6 @@ public class BuffListener implements Listener {
             }
         }.runTaskTimer(plugin, 0, (oreXRayCooldownMin + random.nextInt(oreXRayCooldownMax - oreXRayCooldownMin + 1)) * 20L);
 
-        // Scavenger task with the timer from the configuration
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -150,7 +144,6 @@ public class BuffListener implements Listener {
         }
     }
 
-    // Other methods remain unchanged
     private void applyPotionBuffs(Player p) {
         PetEntity pet = plugin.getPetManager().getActivePet(p);
         if (pet == null) return;
@@ -237,7 +230,7 @@ public class BuffListener implements Listener {
         Block block = e.getBlock();
         Material m = block.getType();
 
-        // Magnetic Mining: immediate pickup
+        // Magnetic Mining
         if (b.getOrDefault(BuffType.MAGNETIC_MINING, 0.0) > 0 && isOre(m)) {
             for (ItemStack drop : block.getDrops()) {
                 p.getInventory().addItem(drop);
@@ -297,7 +290,7 @@ public class BuffListener implements Listener {
             p.sendMessage("§aWood Fortune!");
         }
 
-        // Area Pickup in 5×5 instantly
+        // Area Pickup in 5×5
         if (b.getOrDefault(BuffType.AREA_PICKUP, 0.0) > 0) {
             collectNearby(p, 5);
         }
@@ -401,7 +394,7 @@ public class BuffListener implements Listener {
             p.sendMessage("§aLooting Boost!");
         }
 
-        // Lucky Kill (coins) — now only once
+        // Lucky Kill
         if (econ != null && b.getOrDefault(BuffType.LUCKY_KILL, 0.0) > 0 && random.nextDouble() * 100 < b.get(BuffType.LUCKY_KILL)) {
             int amt = luckyKillMin + random.nextInt(luckyKillMax - luckyKillMin + 1);
             econ.depositPlayer(p, amt);

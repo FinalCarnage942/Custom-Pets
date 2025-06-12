@@ -10,7 +10,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -163,7 +162,39 @@ public class PetManager implements Listener {
                 petEntity.getArmorStand().customName(comp);
             }
             if (!settings.isVisibleToOthers()) petEntity.setGloballyVisible(false);
-            if (settings.getCustomRarity() != null) pet.setRarity(settings.getCustomRarity());
+            
+            if (settings.getCustomRarity() != null) {
+                pet.setRarity(settings.getCustomRarity());
+            }
+        } else {
+            // If no settings found, check if it's a redeemed pet
+            FileConfiguration config = plugin.getConfig();
+            String redeemedPath = "redeemed." + uuid.toString() + "." + petId;
+            String redeemedRarityStr = config.getString(redeemedPath);
+
+            if (redeemedRarityStr != null) {
+                try {
+                    Pet.Rarity redeemedRarity = Pet.Rarity.valueOf(redeemedRarityStr.toUpperCase());
+                    pet.setRarity(redeemedRarity);
+
+                    // Create new settings with the redeemed rarity
+                    PetSettings newSettings = new PetSettings();
+                    newSettings.setCustomRarity(redeemedRarity);
+
+                    // Store in memory and config
+                    petSettingsMap.computeIfAbsent(uuid, k -> new HashMap<>())
+                            .put(petId, newSettings);
+
+                    String basePath = "player-pets." + uuid + "." + petId + ".";
+                    config.set(basePath + "pet-id", petId);
+                    config.set(basePath + "rarity", redeemedRarityStr);
+                    config.set(basePath + "level", 1);
+                    config.set(basePath + "xp", 0);
+                    plugin.saveConfig();
+                } catch (IllegalArgumentException ignored) {
+                    plugin.getLogger().warning("Invalid redeemed rarity value: " + redeemedRarityStr);
+                }
+            }
         }
 
         activePets.put(uuid, petEntity);
@@ -227,31 +258,81 @@ public class PetManager implements Listener {
     }
 
     public PetSettings getSettings(UUID playerUUID, String petId) {
-        return petSettingsMap
-                .computeIfAbsent(playerUUID, k -> new HashMap<>())
-                .computeIfAbsent(petId, k -> {
-                    FileConfiguration config = plugin.getConfig();
-                    String basePath = "player-pets." + playerUUID + "." + petId + ".";
+        // First look in petSettingsMap
+        Map<String, PetSettings> playerSettings = petSettingsMap.get(playerUUID);
+        if (playerSettings != null) {
+            PetSettings existingSettings = playerSettings.get(petId);
+            if (existingSettings != null) {
+                return existingSettings;
+            }
+        }
 
-                    if (config.isSet(basePath + "pet-id")) {
-                        PetSettings loaded = new PetSettings();
-                        loaded.setVisible(config.getBoolean(basePath + "visible", true));
-                        loaded.setFloatingEnabled(config.getBoolean(basePath + "floating", true));
-                        loaded.setCustomName(config.getString(basePath + "custom-name", null));
-                        loaded.setVisibleToOthers(config.getBoolean(basePath + "visible-to-others", true));
-                        loaded.setLevel(config.getInt(basePath + "level", 1));
-                        loaded.setXp(config.getInt(basePath + "xp", 0));
-                        String rarityStr = config.getString(basePath + "rarity");
-                        if (rarityStr != null) {
-                            try {
-                                loaded.setCustomRarity(Pet.Rarity.valueOf(rarityStr.toUpperCase()));
-                            } catch (IllegalArgumentException ignored) {}
-                        }
-                        return loaded;
-                    } else {
-                        return new PetSettings();
-                    }
-                });
+        // If not found in memory, look in config
+        FileConfiguration config = plugin.getConfig();
+        String basePath = "player-pets." + playerUUID + "." + petId + ".";
+
+        // If not found in player-pets, look in redeemed section
+        if (!config.isSet(basePath + "pet-id")) {
+            String redeemedPath = "redeemed." + playerUUID.toString() + "." + petId;
+            String redeemedRarityStr = config.getString(redeemedPath);
+
+            if (redeemedRarityStr != null) {
+                // Create new settings with the redeemed rarity
+                PetSettings redeemedSettings = new PetSettings();
+                try {
+                    redeemedSettings.setCustomRarity(Pet.Rarity.valueOf(redeemedRarityStr.toUpperCase()));
+                } catch (IllegalArgumentException ignored) {
+                    plugin.getLogger().warning("Invalid redeemed rarity value: " + redeemedRarityStr);
+                }
+
+                // Store in memory
+                petSettingsMap.computeIfAbsent(playerUUID, k -> new HashMap<>())
+                        .put(petId, redeemedSettings);
+
+                // Copy to player-pets section if not already there
+                if (!config.isSet(basePath + "pet-id")) {
+                    plugin.getLogger().info("Copying redeemed pet data to player-pets section for " + petId);
+                    config.set(basePath + "pet-id", petId);
+                    config.set(basePath + "rarity", redeemedRarityStr);
+                    config.set(basePath + "level", 1);
+                    config.set(basePath + "xp", 0);
+                    // Set other defaults as needed
+                    plugin.saveConfig();
+                }
+
+                return redeemedSettings;
+            }
+        }
+
+        if (config.isSet(basePath + "pet-id")) {
+            PetSettings loaded = new PetSettings();
+            loaded.setVisible(config.getBoolean(basePath + "visible", true));
+            loaded.setFloatingEnabled(config.getBoolean(basePath + "floating", true));
+            loaded.setCustomName(config.getString(basePath + "custom-name", null));
+            loaded.setVisibleToOthers(config.getBoolean(basePath + "visible-to-others", true));
+            loaded.setLevel(config.getInt(basePath + "level", 1));
+            loaded.setXp(config.getInt(basePath + "xp", 0));
+            String rarityStr = config.getString(basePath + "rarity");
+            if (rarityStr != null) {
+                try {
+                    loaded.setCustomRarity(Pet.Rarity.valueOf(rarityStr.toUpperCase()));
+                } catch (IllegalArgumentException ignored) {
+                    plugin.getLogger().warning("Invalid rarity value for pet " + petId + ": " + rarityStr);
+                }
+            }
+
+            // Store in memory
+            petSettingsMap.computeIfAbsent(playerUUID, k -> new HashMap<>())
+                    .put(petId, loaded);
+
+            return loaded;
+        }
+
+        // If we get here, no settings were found, so create new defaults
+        PetSettings newSettings = new PetSettings();
+        petSettingsMap.computeIfAbsent(playerUUID, k -> new HashMap<>())
+                .put(petId, newSettings);
+        return newSettings;
     }
 
     public void savePetData(UUID playerUUID, PetEntity petEntity) {

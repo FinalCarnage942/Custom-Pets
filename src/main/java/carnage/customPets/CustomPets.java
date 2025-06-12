@@ -3,7 +3,6 @@ package carnage.customPets;
 import carnage.customPets.Buffs.BuffListener;
 import carnage.customPets.Commands.PetAscendCommand;
 import carnage.customPets.Commands.PetCommand;
-import carnage.customPets.PetItem.AbilityItemListener;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -45,7 +44,6 @@ public class CustomPets extends JavaPlugin {
         PetXPListener petXPListener = new PetXPListener(this);
 
         getServer().getPluginManager().registerEvents(new PetListener(this), this);
-        getServer().getPluginManager().registerEvents(new AbilityItemListener(this), this);
         getServer().getPluginManager().registerEvents(new BuffListener(this), this);
         getServer().getPluginManager().registerEvents(petXPListener, this);
         getServer().getPluginManager().registerEvents(new Listener() {
@@ -115,19 +113,20 @@ public class CustomPets extends JavaPlugin {
     public void reload() {
         // Reload all configurations
         reloadConfig();
+        saveDefaultConfig();
+        saveResource("buffs.yml", false);
+        saveResource("pets.yml", false);
+        saveResource("xp_values.yml", false);
+        saveResource("rarities.yml", false);
         loadConfigs();
 
-        // Reload the PetManager to apply the new configurations
         petManager.reload();
 
-        // Re-register custom recipes with the updated pets
         CustomRecipes.registerRecipes(this, petManager.getPets());
 
-        // Reinitialize BuffListener with updated configurations
         BuffListener buffListener = new BuffListener(this);
         getServer().getPluginManager().registerEvents(buffListener, this);
 
-        // Notify all online players that the configurations have been reloaded
         for (Player player : Bukkit.getOnlinePlayers()) {
             PetEntity petEntity = petManager.getActivePet(player);
             if (petEntity != null) {
@@ -136,13 +135,18 @@ public class CustomPets extends JavaPlugin {
         }
     }
 
-
-
     public void redeemPetForPlayer(UUID playerUUID, String petId) {
         Pet.Rarity rarity = determinePetRarity();
         String path = "redeemed." + playerUUID.toString() + "." + petId;
         getConfig().set(path, rarity.name());
         saveConfig();
+
+        // Ensure the pet's rarity is set correctly in the PetManager
+        PetManager petManager = getPetManager();
+        Pet pet = petManager.getPets().get(petId);
+        if (pet != null) {
+            pet.setRarity(rarity);
+        }
     }
 
     public List<String> getRedeemedPets(UUID playerUUID) {
@@ -156,7 +160,6 @@ public class CustomPets extends JavaPlugin {
     public Pet.Rarity getRedeemedPetRarity(UUID playerUUID, String petId) {
         FileConfiguration config = getConfig();
 
-        // 1. Check player-pets section first
         String playerPath = "player-pets." + playerUUID + "." + petId + ".rarity";
         String playerRarityStr = config.getString(playerPath);
         if (playerRarityStr != null) {
@@ -167,7 +170,6 @@ public class CustomPets extends JavaPlugin {
             }
         }
 
-        // 2. Check redeemed section
         String redeemedPath = "redeemed." + playerUUID.toString() + "." + petId;
         String redeemedRarityStr = config.getString(redeemedPath);
         if (redeemedRarityStr != null) {
@@ -178,13 +180,20 @@ public class CustomPets extends JavaPlugin {
             }
         }
 
-        // 3. Return UNCOMMON as default
-        return Pet.Rarity.UNCOMMON;
+        return Pet.Rarity.COMMON;
     }
 
     public Pet.Rarity determinePetRarity() {
+        FileConfiguration raritiesConfig = getRaritiesConfig();
         ConfigurationSection rarityChances = raritiesConfig.getConfigurationSection("rarity-crafting-chances");
+
+        if (rarityChances == null) {
+            getLogger().warning("No 'rarity-crafting-chances' section found in rarities config! Using default chances.");
+            return Pet.Rarity.COMMON;
+        }
+
         Map<Pet.Rarity, Integer> chances = new EnumMap<>(Pet.Rarity.class);
+        int totalChance = 0;
 
         // Load the chances for each rarity
         for (String key : rarityChances.getKeys(false)) {
@@ -192,6 +201,7 @@ public class CustomPets extends JavaPlugin {
                 Pet.Rarity rarity = Pet.Rarity.valueOf(key.toUpperCase());
                 int chance = rarityChances.getInt(key);
                 chances.put(rarity, chance);
+                totalChance += chance;
             } catch (IllegalArgumentException ignored) {
                 getLogger().warning("Invalid rarity key in 'rarity-crafting-chances': " + key);
             }
@@ -204,10 +214,30 @@ public class CustomPets extends JavaPlugin {
             }
         }
 
+        // If total chances don't add up to 100, normalize them
+        if (totalChance != 100) {
+            getLogger().warning("Rarity chances don't sum to 100 (sum is " + totalChance + "). Normalizing probabilities.");
+
+            if (totalChance > 0) {
+                Map<Pet.Rarity, Integer> normalizedChances = new EnumMap<>(Pet.Rarity.class);
+                for (Map.Entry<Pet.Rarity, Integer> entry : chances.entrySet()) {
+                    int normalizedChance = (int) Math.round((entry.getValue() * 100.0) / totalChance);
+                    normalizedChances.put(entry.getKey(), normalizedChance);
+                }
+                chances = normalizedChances;
+            } else {
+                chances.clear();
+                chances.put(Pet.Rarity.COMMON, 70);
+                chances.put(Pet.Rarity.UNCOMMON, 20);
+                chances.put(Pet.Rarity.RARE, 10);
+            }
+        }
+
         // Otherwise, use the weighted random selection
         int totalWeight = chances.values().stream().mapToInt(Integer::intValue).sum();
         if (totalWeight <= 0) {
-            return Pet.Rarity.COMMON; // Default to UNCOMMON if no valid chances are found
+            getLogger().warning("Total weight for rarity chances is <= 0. Defaulting to COMMON.");
+            return Pet.Rarity.COMMON;
         }
 
         Random random = new Random();
@@ -221,10 +251,8 @@ public class CustomPets extends JavaPlugin {
             }
         }
 
-        // Fallback to UNCOMMON if something unexpected happens
-        return Pet.Rarity.UNCOMMON;
+        return Pet.Rarity.COMMON;
     }
-
 
     public FileConfiguration getBuffsConfig() {
         return buffsConfig;

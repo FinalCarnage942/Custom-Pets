@@ -1,7 +1,6 @@
 package carnage.customPets;
 
 import carnage.customPets.Buffs.BuffType;
-import carnage.customPets.PetItem.AbilityItem;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
@@ -81,18 +80,9 @@ public class PetEntity {
         startFollowing();
         startLevitationEffect();
 
-        boolean useAbilityItem = plugin.getConfig().getBoolean("pets.use-ability-item", false);
         int intervalSeconds = plugin.getConfig().getInt("pets.effect-interval", 5);
+        startAutoBuffTask(intervalSeconds);
 
-        if (useAbilityItem) {
-            giveAbilityItem();
-        } else {
-            startAutoBuffTask(intervalSeconds);
-        }
-    }
-
-    public Player getOwner() {
-        return owner;
     }
 
     public Pet getPet() {
@@ -118,13 +108,8 @@ public class PetEntity {
         this.owner = player;
         startFollowing();
 
-        boolean useAbilityItem = plugin.getConfig().getBoolean("pets.use-ability-item", false);
         int intervalSeconds = plugin.getConfig().getInt("pets.effect-interval", 5);
-        if (useAbilityItem) {
-            giveAbilityItem();
-        } else {
-            startAutoBuffTask(intervalSeconds);
-        }
+        startAutoBuffTask(intervalSeconds);
 
         if (!globallyVisible) {
             hideFromAllExceptOwner();
@@ -262,15 +247,6 @@ public class PetEntity {
         }
     }
 
-    private void giveAbilityItem() {
-        for (ItemStack item : owner.getInventory().getContents()) {
-            if (item != null && AbilityItem.isAbilityItem(item)) {
-                return;
-            }
-        }
-        owner.getInventory().addItem(AbilityItem.createAbilityItem(pet.getDisplayName()));
-    }
-
     public void remove() {
         if (followTask != null) {
             followTask.cancel();
@@ -288,11 +264,6 @@ public class PetEntity {
             armorStand.remove();
         }
 
-        removeAbilityItem();
-    }
-
-    private void removeAbilityItem() {
-        owner.getInventory().removeItem(AbilityItem.createAbilityItem(pet.getDisplayName()));
     }
 
     public boolean isVisible() {
