@@ -1,0 +1,71 @@
+buffs:
+  FARMING:
+    DOUBLE_CROP_DROP:
+      chance: 10
+    AUTO_REPLANT:
+      chance: 15
+    FARM_HAND:
+      chance: 20
+    TREASURE_HUNTER:
+      chance: 25
+
+  FORAGING:
+    WOOD_FORTUNE:
+      chance: 10
+    TREASURE_HUNTER:
+      chance: 20
+    AREA_PICKUP:
+      chance: 15
+
+  PVP:
+    ONE_SHOT:
+      chance: 5
+    DOUBLE_MOB_DROPS:
+      chance: 10
+    XP_BOOST:
+      chance: 15
+    LOOTING_BOOST:
+      chance: 20
+    SCAVENGER:
+      chance: 25
+
+  MINING:
+    AREA_MINE:
+      chance: 10
+    INSTANT_SMELT:
+      chance: 15
+    ORE_XRAY:
+      chance: 20
+    MAGNETIC_MINING:
+      chance: 25
+    GOLDEN_TOUCH:
+      chance: 30
+    VEIN_MINER:
+      chance: 35
+    TREASURE_HUNTER:
+      chance: 40
+    SPREAD:
+      chance: 45
+
+scavenger:
+  min-amount: 2
+  max-amount: 2
+  timer: 5
+
+lucky-kill:
+  min-amount: 1
+  max-amount: 5
+
+ore-xray:
+  min-timer: 1
+  max-timer: 5
+
+treasure-hunter-drops:
+  DIAMOND:
+    chance: 0.1
+  BONE:
+    chance: 0.2
+  NAME_TAG:
+    chance: 0.3
+  RAW_GOLD:
+    chance: 0.4

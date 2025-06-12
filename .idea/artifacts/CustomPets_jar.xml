@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CustomPets:jar">
+    <output-path>$PROJECT_DIR$/../../jar file plugins</output-path>
+    <root id="archive" name="CustomPets.jar">
+      <element id="module-output" name="CustomPets" />
+    </root>
+  </artifact>
+</component>

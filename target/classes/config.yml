@@ -1,0 +1,6 @@
+# General settings for the plugin
+despawn-on-quit: false
+allow-rename: true
+effect-interval: 5
+use-ability-item: false
+

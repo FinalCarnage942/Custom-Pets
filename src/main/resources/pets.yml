@@ -1,0 +1,129 @@
+pets:
+  cow:
+    recipe:
+      - "DDD"
+      - "DCD"
+      - "DDD"
+    ingredients:
+      D: "DIAMOND"
+      C: "EGG"
+    display-name: "§aFarming Cow"
+    type: "FARMING"
+    description: ""
+    buffs:
+      DOUBLE_CROP_DROP:
+        chance: 20
+      SPREAD:
+        chance: 50
+        blocks: 2
+      ONE_SHOT:
+        chance: 10
+      ORE_XRAY:
+        chance: 100
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWFmMzI5NDk5Nzc2Nzg0NGY5MTIzNzA3YzIxN2QzMzg1ZWZlMzM3MmQxNzc4OTdkZmM2NWMzM2JmNzNiYTdlNyJ9fX0="
+    base-xp: 1000
+    xp-multiplier: 1.5
+    max-level: 10
+
+  fox:
+    recipe: [ ]
+    ingredients: { }
+    display-name: "§6Clever Fox"
+    type: "FARMING"
+    description: ""
+    buffs:
+      FISHING_LUCK:
+        chance: 15
+      DOUBLE_MOB_DROPS:
+        chance: 25
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGE2NjgyMmNjMjJhZjhmOTMzNjNlNDYwZDkwMjExNTVhZTZhMzYyMGNiOTUwYzYxYjA0YzQ4M2UxMWZiMzUwMiJ9fX0="
+
+  rabbit:
+    recipe:
+      - "DDD"
+      - "DCD"
+      - "DDD"
+    ingredients:
+      D: "WIND_CHARGE"
+      C: "EGG"
+    display-name: "§fSpeedy the Rabbit"
+    type: "FARMING"
+    description: ""
+    buffs:
+      AUTO_REPLANT:
+        chance: 100
+      FISHING_LUCK:
+        chance: 15
+      DOUBLE_MOB_DROPS:
+        chance: 25
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGVlODFjMGI2Y2Q4ZjE4YWRiNDcxOWZhNTlkYTI5Mzc4ODI4MmE0YzlmMWZmYzExNWIyMzk3ZmI1YjVmY2ZhNyJ9fX0="
+
+  slime:
+    recipe:
+      - "DDD"
+      - "DCD"
+      - "DDD"
+    ingredients:
+      D: "SLIME_BALL"
+      C: "SLIME_BLOCK"
+    display-name: "§aChompy the Slime"
+    type: "FARMING"
+    description: ""
+    buffs:
+      JUMP_BOOST:
+        timer: 10
+      DAMAGE_RESISTANCE:
+        timer: 5
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjY5ZmMwNjRlNzIwMGIyMjgyNGFiOWJmZTg2ODVkNjMxNDlhNTJkYWNlNjYyOGEzYTMxMTMyNGRlNDNkN2Y1ZCJ9fX0="
+
+  blaze:
+    recipe: [ ]
+    ingredients: { }
+    display-name: "§6Blazey"
+    type: "FARMING"
+    description: ""
+    buffs:
+      FIRE_RESISTANCE:
+        timer: 100
+      STRENGTH:
+        timer: 5
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzM3NjIzZjc5ZjdlYjRmM2Y4MGRhNjViNjUyY2M0NGIyMTQ4ZWVhNDFmOWZmZTJlODZhMjNiZGY0OWFiNzdiMSJ9fX0="
+
+  phantom:
+    recipe: [ ]
+    ingredients: { }
+    display-name: "§5Shadow Phantom"
+    type: "FARMING"
+    description: "A friendly cow that helps your crops grow faster!"
+    buffs:
+      FIRE_RESISTANCE:
+        timer: 100
+      STRENGTH:
+        timer: 5
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzQ2ODMwZGE1ZjgzYTNhYWVkODM4YTk5MTU2YWQ3ODFhNzg5Y2ZjZjEzZTI1YmVlZjdmNTRhODZlNGZhNCJ9fX0="
+
+  golem:
+    recipe: [ ]
+    ingredients: { }
+    display-name: "§7Golem Core"
+    type: "FARMING"
+    description: ""
+    buffs:
+      DAMAGE_RESISTANCE:
+        timer: 15
+      STRENGTH:
+        timer: 10
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTk2YjJhYThlNTBmZDhhZWU0MjYxYmFjNmYzMThjYTNkNGVmZTY2ZjJhNDE4NzU0YTYwNTExM2ViZDVkNzdmIn19fQ=="
+
+  dragonling:
+    recipe: [ ]
+    ingredients: { }
+    display-name: "§dVoid Dragonling"
+    type: "FARMING"
+    description: ""
+    buffs:
+      DAMAGE_RESISTANCE:
+        timer: 15
+      STRENGTH:
+        timer: 10
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2U0ZDM1YTJmNmJkNzM5NjA1ZmE0ZWFhNmUxNWQwMzgwMDlmM2YyMGIxYTIwNDYyODAxNjA1ODczNmU3Yjk1ZSJ9fX0="

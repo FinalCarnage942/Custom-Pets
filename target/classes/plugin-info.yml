@@ -1,0 +1,148 @@
+# ===============================
+#     MyPets Plugin Info
+# ===============================
+# This file describes the functionality, buffs, and customization options
+# available with the MyPets plugin.
+
+plugin:
+  name: MyPets
+  version: 1.0.0
+  author: Carnage   #discord id : 1053284509816213586
+  description:
+    This plugin adds customizable pets that provide players with various buffs.
+    Pets can be customized and managed through the configuration file.
+    Players can benefit from effects like increased speed, jump boosts, and special abilities.
+
+# ===============================
+#        Available Buffs
+# ===============================
+
+buffs:
+  - Potion Effects:
+      - SPEED: Boosts player's movement speed.
+      - JUMP_BOOST: Increases jump height.
+      - STRENGTH: Boosts melee attack damage.
+      - REGENERATION: Gradual health recovery.
+      - FIRE_RESISTANCE: Immunity to fire and lava damage.
+      - INVISIBILITY: Makes the player invisible.
+      - DAMAGE_RESISTANCE: Reduces incoming damage.
+      - NIGHT_VISION: Improves visibility in darkness.
+      - WATER_BREATHING: Allows breathing underwater.
+      - HASTE: Increases mining speed.
+      - ABSORPTION: Grants extra temporary hearts.
+      - SATURATION: Keeps hunger bar filled passively.
+      - RESISTANCE: Slightly reduces all incoming damage.
+      - HEALTH_BOOST: Increases max health temporarily.
+      - SLOW_FALLING: Prevents fall damage.
+      - CONDUIT_POWER: Improved underwater abilities.
+      - HERO_OF_THE_VILLAGE: Improved trades with villagers.
+
+  - Custom:
+      - DOUBLE_CROP_DROP: Chance to double harvested crops.
+      - SPREAD: Chance to mine multiple blocks at once
+      - FISHING_LUCK: Increases chance for rare fishing loot.
+      - ONE_SHOT: Chance to instantly kill mobs on hit.
+      - DOUBLE_MOB_DROPS: Chance to double mob item drops.
+      - XP_BOOST: Gain more XP from mobs and activities.
+      - LOOTING_BOOST: Increases chance for rare mob drops.
+      - AREA_MINE: Breaks surrounding blocks in a 3x3 area.
+      - WOOD_FORTUNE: Increases log drops when chopping.
+      - SCAVENGER: Chance to find bonus loot when killing mobs.
+      - LUCKY_KILL: Chance to drop emerald or rare item on mob kill.
+      - MOB_REPELLENT: Passive chance to prevent hostile mob targeting.
+      - INSTANT_SMELT: Ores drop smelted ingots instantly.
+      - NO_FALL: Prevents fall damage.
+      - ORE_XRAY: Highlights nearby ores when mining (via particles/glow).
+      - AUTO_REPLANT: Crops are replanted automatically when harvested.
+      - MOB_SLOW: Slows mobs within a small radius.
+      - AREA_PICKUP: Automatically picks up drops in an area.
+      - FREEZE_STRIKE: Chance to freeze enemy on hit.
+      - SHIELD_WALL: Chance to block all incoming damage briefly.
+      - MAGNETIC_MINING: Auto-pickup ores while mining.
+      - BLOODLUST: Temporary strength boost after mob kill.
+      - DODGE: Chance to completely avoid damage.
+      - BURN_AURA: Burns nearby enemies passively.
+      - POISON_TOUCH: Applies poison to enemies on hit.
+      - GOLDEN_TOUCH: Chance for ores to drop gold instead.
+      - PET_HEAL: Slowly heals you while pet is summoned.
+      - TREASURE_HUNTER: Chance to find loot in dirt/gravel/sand.
+      - FARM_HAND: Speeds up crop growth nearby.
+      - SOUL_COLLECTOR: Killing mobs grants short strength bonus.
+      - VEIN_MINER: Mines entire connected vein of ores.
+      - REFLECT_DAMAGE: Chance to reflect incoming damage back.
+
+# ===============================
+#        Pet Types
+# ===============================
+
+
+# ===============================
+#     Adding New Pets
+# ===============================
+
+adding_pets:
+  steps:
+    - Create a new entry in the `config.yml` file under the `pets` section.
+    - Use the following format for the new pet:
+
+      pet_name:
+        recipe:
+        ingredients:
+        display-name: "Display Name"
+        description: "Description of the pet"
+        buffs:
+          BUFF_TYPE: amplifier_value
+        texture: "texture_value"
+
+    - Example:
+
+      bee:
+        recipe:
+          - H B H
+          - B E B
+          - H B H
+        ingredients:
+          - H: "HONEY BOTTLE"
+          - B: "HONEY BLOCK"
+          - E: "EGG"
+        display-name: "§eBuzzy Bee"
+        description: "A bee that increases your speed and luck!"
+        buffs:
+          SPEED: 10
+          FISHING_LUCK: 15
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJmZmMxZGM4ZGFiZWUyYjA0MGMxYjQwYTkzZjUxYjQzYjc0ZGM1MGYyNTc2M2M1ZjJkNGEwYmM1In19fQ=="
+
+    - Restart or reload the server.
+    - The new pet will now be available in the game.
+    - To find the textures, use this link "https://minecraft-heads.com" and head down to "Value" and copy that line of random numbers and letters
+
+# ===============================
+#       Player Commands
+# ===============================
+
+commands:
+  - /pet open - Open your pet menu.
+  - /pet equip <pet> - Equip a pet by name.
+  - /pet unequip - Unequip your current pet.
+  - /pet info - See info about your current pet.
+
+# ===============================
+#         Permissions
+# ===============================
+
+permissions:
+  custompets.interact:
+    description: Allows interacting with pets
+    default: true
+
+  pets.admin:
+    description: Allows access to all pet commands
+    default: op
+
+  pets.give:
+    description: Allows giving pets to players
+    default: op
+
+  pets.reload:
+    description: Allows reloading the plugin configuration
+    default: op

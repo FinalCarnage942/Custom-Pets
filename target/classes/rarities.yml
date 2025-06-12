@@ -1,0 +1,11 @@
+rarities:
+  common-name: "Common"
+  uncommon-name: "Uncommon"
+  rare-name: "Rare"
+  epic-name: "Epic"
+  legendary-name: "Legendary"
+
+rarity-crafting-chances:
+  common: 70
+  uncommon: 20
+  rare: 10

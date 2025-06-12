@@ -1,0 +1,32 @@
+name: CustomPets
+version: 1.0
+main: carnage.customPets.CustomPets
+api-version: "1.21"
+depend:
+  - Vault
+permissions:
+  custompets.interact:
+    description: Allows interacting with pets
+    default: true
+  pets.admin:
+    description: Allows access to all pet commands
+    default: op
+  pets.give:
+    description: Allows giving pets to players
+    default: op
+  pets.reload:
+    description: Allows reloading the plugin configuration
+    default: op
+
+commands:
+  pet:
+    description: Manage your pets
+    usage: |
+      /pet give <type>
+      /pet spawn [type]
+      /pet menu
+      /pet reload
+    aliases: [pets]
+  petascend:
+    description: Handle pet ascension response
+    usage: /petascend <yes|no> <petId>
